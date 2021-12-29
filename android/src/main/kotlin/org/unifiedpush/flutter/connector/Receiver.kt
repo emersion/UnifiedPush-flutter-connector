@@ -79,72 +79,20 @@ val handler = object : MessagingReceiverHandler {
     }
 }
 
-class Receiver : MessagingReceiver(handler) {
-    override fun onReceive(context: Context?, intent: Intent?) {
-        if (Plugin.isWithCallback(context!!)) {
-            super.onReceive(context, intent)
-        }
-    }
+val nullHandler = object : MessagingReceiverHandler {
+    override fun onMessage(context: Context?, message: String, instance: String) {}
+    override fun onNewEndpoint(context: Context?, endpoint: String, instance: String) {}
+    override fun onRegistrationFailed(context: Context?, instance: String) {}
+    override fun onRegistrationRefused(context: Context?, instance: String) {}
+    override fun onUnregistered(context: Context?, instance: String) {}
 }
 
-/***
- * Handler used when the Receiver is defined in the app
- */
-
-abstract class UnifiedPushHandler : MessagingReceiverHandler {
-    abstract fun getEngine(context: Context): FlutterEngine
-
-    private val handler = Handler()
-
-    private fun getPlugin(context: Context): Plugin {
-        val registry = getEngine(context).getPlugins()
-        var plugin = registry.get(Plugin::class.java) as? Plugin
-        if (plugin == null) {
-            plugin = Plugin()
-            registry.add(plugin)
+var metaHandler = handler
+class Receiver : MessagingReceiver(metaHandler) {
+    override fun onReceive(context: Context?, intent: Intent?) {
+        if (!Plugin.isWithCallback(context!!)) {
+            metaHandler = nullHandler
         }
-        return plugin;
-    }
-
-    override fun onMessage(context: Context?, message: String, instance: String) {
-        Log.d("Receiver","OnMessage")
-        val data = mapOf("instance" to instance,
-            "message" to message)
-        handler.post {
-            getPlugin(context!!).withReceiverChannel?.invokeMethod("onMessage",  data)
-        }
-    }
-
-    override fun onNewEndpoint(context: Context?, endpoint: String, instance: String) {
-        Log.d("Receiver","OnNewEndpoint")
-        val data = mapOf("instance" to instance,
-            "endpoint" to endpoint)
-        handler.post {
-            getPlugin(context!!).withReceiverChannel?.invokeMethod("onNewEndpoint", data)
-        }
-    }
-
-    override fun onRegistrationFailed(context: Context?, instance: String) {
-        Log.d("Receiver","OnRegistrationFailed")
-        val data = mapOf("instance" to instance)
-        handler.post {
-            getPlugin(context!!).withReceiverChannel?.invokeMethod("onRegistrationFailed", data)
-        }
-    }
-
-    override fun onRegistrationRefused(context: Context?, instance: String) {
-        Log.d("Receiver","OnRegistrationRefused")
-        val data = mapOf("instance" to instance)
-        handler.post {
-            getPlugin(context!!).withReceiverChannel?.invokeMethod("onRegistrationRefused", data)
-        }
-    }
-
-    override fun onUnregistered(context: Context?, instance: String) {
-        Log.d("Receiver","OnUnregistered")
-        val data = mapOf("instance" to instance)
-        handler.post {
-            getPlugin(context!!).withReceiverChannel?.invokeMethod("onUnregistered", data)
-        }
+        super.onReceive(context, intent)
     }
 }
