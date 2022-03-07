@@ -11,7 +11,7 @@ import org.unifiedpush.android.connector.MessagingReceiver
  */
 
 class InternalReceiver : MessagingReceiver() {
-    override fun onMessage(context: Context?, message: String, instance: String) {
+    override fun onMessage(context: Context, message: ByteArray, instance: String) {
         val broadcastIntent = Intent()
         broadcastIntent.`package` = context!!.packageName
         broadcastIntent.action = INT_ACTION_MESSAGE
@@ -20,7 +20,7 @@ class InternalReceiver : MessagingReceiver() {
         context.sendBroadcast(broadcastIntent)
     }
 
-    override fun onNewEndpoint(context: Context?, endpoint: String, instance: String) {
+    override fun onNewEndpoint(context: Context, endpoint: String, instance: String) {
         val broadcastIntent = Intent()
         broadcastIntent.`package` = context!!.packageName
         broadcastIntent.action = INT_ACTION_NEW_ENDPOINT
@@ -29,7 +29,7 @@ class InternalReceiver : MessagingReceiver() {
         context.sendBroadcast(broadcastIntent)
     }
 
-    override fun onRegistrationFailed(context: Context?, instance: String) {
+    override fun onRegistrationFailed(context: Context, instance: String) {
         val broadcastIntent = Intent()
         broadcastIntent.`package` = context!!.packageName
         broadcastIntent.action = INT_ACTION_REGISTRATION_FAILED
@@ -37,7 +37,7 @@ class InternalReceiver : MessagingReceiver() {
         context.sendBroadcast(broadcastIntent)
     }
 
-    override fun onUnregistered(context: Context?, instance: String) {
+    override fun onUnregistered(context: Context, instance: String) {
         val broadcastIntent = Intent()
         broadcastIntent.`package` = context!!.packageName
         broadcastIntent.action = INT_ACTION_UNREGISTERED

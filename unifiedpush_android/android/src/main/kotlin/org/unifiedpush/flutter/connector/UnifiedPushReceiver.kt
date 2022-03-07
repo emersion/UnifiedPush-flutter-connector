@@ -29,7 +29,7 @@ open class UnifiedPushReceiver : BroadcastReceiver() {
         return plugin;
     }
 
-    private fun onMessage(context: Context?, message: String, instance: String) {
+    private fun onMessage(context: Context?, message: ByteArray, instance: String) {
         Log.d("Receiver","OnMessage")
         val data = mapOf("instance" to instance,
             "message" to message)
@@ -69,7 +69,7 @@ open class UnifiedPushReceiver : BroadcastReceiver() {
                 acquire(60000L /*1min*/)
             }
         }
-        val instance = intent!!.getStringExtra(INT_EXTRA_INSTANCE)
+        val instance = intent!!.getStringExtra(INT_EXTRA_INSTANCE)!!
         when (intent.action) {
             INT_ACTION_NEW_ENDPOINT -> {
                 val endpoint = intent.getStringExtra(INT_EXTRA_ENDPOINT)!!
@@ -82,7 +82,7 @@ open class UnifiedPushReceiver : BroadcastReceiver() {
                 onUnregistered(context, instance)
             }
             INT_ACTION_MESSAGE -> {
-                val message = intent.getStringExtra(INT_EXTRA_MESSAGE)!!
+                val message = intent.getByteArrayExtra(INT_EXTRA_MESSAGE)!!
                 onMessage(context, message, instance)
             }
         }

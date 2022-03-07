@@ -12,7 +12,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-import org.unifiedpush.android.connector.Registration
+import org.unifiedpush.android.connector.UnifiedPush
 
 class Plugin : ActivityAware, FlutterPlugin, MethodCallHandler {
     private var mContext : Context? = null
@@ -20,19 +20,17 @@ class Plugin : ActivityAware, FlutterPlugin, MethodCallHandler {
     var pluginChannel: MethodChannel? = null
 
     companion object {
-        private var up = Registration()
-
         @JvmStatic
         private fun getDistributors(context: Context,
                                     result: Result?){
-            val distributors = up.getDistributors(context)
+            val distributors = UnifiedPush.getDistributors(context)
             result?.success(distributors)
         }
 
         @JvmStatic
         private fun getDistributor(context: Context,
                                    result: Result?) {
-            val distributor = up.getDistributor(context)
+            val distributor = UnifiedPush.getDistributor(context)
             result?.success(distributor)
         }
 
@@ -41,7 +39,7 @@ class Plugin : ActivityAware, FlutterPlugin, MethodCallHandler {
                                     args: ArrayList<*>?,
                                     result: Result?) {
             val distributor = args!![0] as String
-            up.saveDistributor(context, distributor)
+            UnifiedPush.saveDistributor(context, distributor)
             result?.success(true)
         }
 
@@ -52,9 +50,9 @@ class Plugin : ActivityAware, FlutterPlugin, MethodCallHandler {
             val instance: String = (args?.get(0) ?: "") as String
             Log.d("Plugin", "registerApp: instance=$instance")
             if (instance.isEmpty()) {
-                up.registerApp(context)
+                UnifiedPush.registerApp(context)
             } else {
-                up.registerApp(context, instance)
+                UnifiedPush.registerApp(context, instance)
             }
             result?.success(true)
         }
@@ -65,9 +63,9 @@ class Plugin : ActivityAware, FlutterPlugin, MethodCallHandler {
                                result: Result) {
             val instance: String = (args?.get(0) ?: "") as String
             if (instance.isEmpty()) {
-                up.unregisterApp(context)
+                UnifiedPush.unregisterApp(context)
             } else {
-                up.unregisterApp(context, instance)
+                UnifiedPush.unregisterApp(context, instance)
             }
             result.success(true)
         }

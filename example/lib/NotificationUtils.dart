@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'main.dart';
@@ -21,14 +23,14 @@ abstract class UPNotificationUtils {
     return decoded;
   }
 
-  static Future<bool> basicOnNotification(String payload, String _instance)
+  static Future<bool> basicOnNotification(Uint8List payload, String _instance)
   async {
     debugPrint("instance " + _instance);
     if (_instance != instance) {
       return false;
     }
     debugPrint("onNotification");
-    Map<String, String> message = decodeMessageContentsUri(payload);
+    Map<String, String> message = decodeMessageContentsUri(UTF8.decode(payload));
     String title = message['title'] ?? "UP-Example";
     String body = message['message'] ?? "Could not get the content";
     int priority = int.parse(message['priority'] ?? "5");
